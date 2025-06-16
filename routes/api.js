@@ -4,12 +4,13 @@ const Project = require('../models/project');
 const Skill = require('../models/skill');
 
 // GET /api/projects — all projects as JSON
-router.get('/projects', async (req, res) => {
+router.get('/projects/:slug', async (req, res) => {
   try {
-    const projects = await Project.find().sort({ createdAt: -1 });
-    res.json(projects);
+    const project = await Project.findOne({ slug: req.params.slug });
+    if (!project) return res.status(404).json({ error: "Not found" });
+    res.json(project);
   } catch (err) {
-    res.status(500).json({ message: 'Error fetching projects', error: err.message });
+    res.status(500).json({ error: "Server error" });
   }
 });
 

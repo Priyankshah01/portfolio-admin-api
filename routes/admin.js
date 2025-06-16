@@ -16,14 +16,42 @@ router.get('/projects', async (req, res) => {
 });
 
 // Add a new project
+// Add a new project
 router.post('/projects', async (req, res) => {
   try {
-    await Project.create(req.body);
+    const {
+      tag, title, slug, description, summary,
+      tools, challenge, approach, impact,
+      image1, image2, images, githubLink, liveLink
+    } = req.body;
+
+    const newProject = new Project({
+      tag,
+      title,
+      slug,
+      description,
+      summary,
+      tools: tools ? tools.split(',').map(t => t.trim()) : [],
+      challenge,
+      approach: approach ? approach.split('\n').map(line => line.trim()).filter(Boolean) : [],
+      impact,
+      image1,
+      image2,
+      images: images ? images.split(',').map(img => img.trim()) : [],
+      githubLink,
+      liveLink,
+      date: new Date(),        // optional: for project year in UI
+      status: "Design"         // optional default if not included
+    });
+
+    await newProject.save();
     res.redirect('/admin/projects');
   } catch (err) {
-    res.status(400).send('Error creating project: ' + err.message);
+    console.error(err);
+    res.status(500).send('Error creating project');
   }
 });
+
 
 // Delete a project
 router.delete('/projects/:id', async (req, res) => {
@@ -40,14 +68,26 @@ router.get('/skills', async (req, res) => {
 });
 
 // Add a new skill
+// Add a new skill
 router.post('/skills', async (req, res) => {
   try {
-    await Skill.create(req.body);
+    const { name, iconUrl, category, order } = req.body;
+
+    const newSkill = new Skill({
+      name,
+      iconUrl,
+      category: category || null,
+      order: order ? parseInt(order) : undefined
+    });
+
+    await newSkill.save();
     res.redirect('/admin/skills');
   } catch (err) {
-    res.status(400).send('Error creating skill: ' + err.message);
+    console.error(err);
+    res.status(500).send('Error creating skill');
   }
 });
+
 
 // Delete a skill
 router.delete('/skills/:id', async (req, res) => {

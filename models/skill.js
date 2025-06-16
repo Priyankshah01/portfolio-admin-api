@@ -4,14 +4,22 @@ const skillSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    unique: true,
+    unique: true
   },
   iconUrl: {
     type: String,
-    required: true,
+    required: true
   },
-  category: String, // e.g. "Frontend", "Design", etc. — optional
-  order: Number,     // optional: helps with sorting display
+  category: {
+    type: String // optional (e.g., "Frontend", "Design Tool", etc.)
+  },
+  order: {
+    type: Number // for sorting in the frontend
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now
+  }
 });
 
 module.exports = mongoose.model('Skill', skillSchema);

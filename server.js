@@ -34,7 +34,7 @@ app.get('/', (req, res) => {
 
 // 404 handler
 app.use((req, res) => {
-  res.status(404).render('error', { message: 'Page Not Found' });
+  res.status(404).send('Page Not Found');
 });
 
 // Start server

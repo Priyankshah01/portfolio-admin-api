@@ -1,0 +1,36 @@
+extends ../layouts/layout
+
+block content
+  h1 Skills Admin
+
+  //- Add New Skill Form
+  form(action="/admin/skills" method="POST")
+    .form-group
+      label(for="name") Skill Name
+      input(type="text" name="name" required placeholder="e.g. React")
+
+    .form-group
+      label(for="iconUrl") Icon URL
+      input(type="text" name="iconUrl" required placeholder="e.g. /images/logos/react.png or https://...")
+
+    .form-group
+      label(for="category") Category (optional)
+      input(type="text" name="category" placeholder="e.g. Frontend")
+
+    .form-group
+      label(for="order") Display Order (optional)
+      input(type="number" name="order" placeholder="e.g. 1")
+
+    button(type="submit") Add Skill
+
+  hr
+
+  //- Existing Skills List
+  h2 Existing Skills
+  ul.skill-list
+    each skill in skills
+      li
+        img(src=skill.iconUrl alt=skill.name style="height:24px;vertical-align:middle;margin-right:8px;")
+        | #{skill.name}
+        form(action=`/admin/skills/${skill._id}?_method=DELETE` method="POST" style="display:inline; margin-left:10px;")
+          button(type="submit") Delete

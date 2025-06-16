@@ -1,0 +1,75 @@
+extends ../layouts/layout
+
+block content
+  h1 Projects Admin
+
+  //- Add New Project Form
+  form(action="/admin/projects" method="POST")
+    .form-group
+      label(for="tag") Tag
+      input(type="text" name="tag" required placeholder="e.g. 🎁 GIFTELLE")
+
+    .form-group
+      label(for="title") Title
+      input(type="text" name="title" required placeholder="Project title")
+
+    .form-group
+      label(for="slug") Slug
+      input(type="text" name="slug" required placeholder="e.g. giftelle")
+
+    .form-group
+      label(for="description") Short Description
+      textarea(name="description")
+
+    .form-group
+      label(for="summary") Summary
+      textarea(name="summary")
+
+    .form-group
+      label(for="tools") Tools (comma-separated)
+      input(type="text" name="tools" placeholder="e.g. React,Figma,Node")
+
+    .form-group
+      label(for="challenge") Challenge
+      textarea(name="challenge")
+
+    .form-group
+      label(for="approach") Approach (one per line)
+      textarea(name="approach")
+
+    .form-group
+      label(for="impact") Impact
+      textarea(name="impact")
+
+    .form-group
+      label(for="image1") Card Image 1 URL
+      input(type="text" name="image1")
+
+    .form-group
+      label(for="image2") Card Image 2 URL
+      input(type="text" name="image2")
+
+    .form-group
+      label(for="images") Additional Image URLs (comma-separated)
+      input(type="text" name="images")
+
+    .form-group
+      label(for="githubLink") GitHub Link
+      input(type="text" name="githubLink")
+
+    .form-group
+      label(for="liveLink") Live Project Link
+      input(type="text" name="liveLink")
+
+    button(type="submit") Add Project
+
+  hr
+
+  //- Existing Projects List
+  h2 Existing Projects
+  each project in projects
+    .project-item
+      h3 #{project.title}
+      p #{project.description}
+      form(action=`/admin/projects/${project._id}?_method=DELETE` method="POST")
+        button(type="submit") Delete

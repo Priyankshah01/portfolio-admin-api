@@ -25,12 +25,21 @@ block content
 
   hr
 
-  //- Existing Skills List
   h2 Existing Skills
   ul.skill-list
     each skill in skills
       li
-        img(src=skill.iconUrl alt=skill.name style="height:24px;vertical-align:middle;margin-right:8px;")
-        | #{skill.name}
-        form(action=`/admin/skills/${skill._id}?_method=DELETE` method="POST" style="display:inline; margin-left:10px;")
-          button(type="submit") Delete
+        if editingId && editingId == skill._id.toString()
+          form(action=`/admin/skills/${skill._id}?_method=PUT` method="POST")
+            input(type="text" name="name" value=skill.name)
+            input(type="text" name="iconUrl" value=skill.iconUrl)
+            input(type="text" name="category" value=skill.category)
+            input(type="number" name="order" value=skill.order)
+            button(type="submit") Save
+            a(href="/admin/skills" style="margin-left: 10px;") Cancel
+        else
+          img(src=skill.iconUrl alt=skill.name style="height:24px;vertical-align:middle;margin-right:8px;")
+          | #{skill.name}
+          form(action=`/admin/skills/${skill._id}?_method=DELETE` method="POST" style="display:inline; margin-left:10px;")
+            button(type="submit") Delete
+          a(href=`/admin/skills?edit=${skill._id}` style="margin-left:10px;") Edit

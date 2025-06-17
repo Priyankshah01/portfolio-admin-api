@@ -9,47 +9,44 @@ router.get('/', (req, res) => {
 });
 
 // --- PROJECTS ---
-// List all projects
+// List all projects with optional edit support
 router.get('/projects', async (req, res) => {
-  const projects = await Project.find().sort({ createdAt: -1 });
-  res.render('admin/projects', { projects });
+  try {
+    const projects = await Project.find().sort({ createdAt: -1 });
+    const editingId = req.query.edit || null;
+    res.render('admin/projects', { projects, editingId });
+  } catch (err) {
+    console.error("Error fetching projects:", err);
+    res.status(500).send("Server Error");
+  }
 });
 
-// Add a new project
-// Add a new project
-router.post('/projects', async (req, res) => {
-  try {
-    const {
-      tag, title, slug, description, summary,
-      tools, challenge, approach, impact,
-      image1, image2, images, githubLink, liveLink
-    } = req.body;
+// Handle project update (PUT)
+router.put('/projects/:id', async (req, res) => {
+  const {
+    tag, title, slug, description, summary,
+    tools, challenge, approach, impact,
+    image1, image2, images, githubLink, liveLink
+  } = req.body;
 
-    const newProject = new Project({
-      tag,
-      title,
-      slug,
-      description,
-      summary,
-      tools: tools ? tools.split(',').map(t => t.trim()) : [],
-      challenge,
-      approach: approach ? approach.split('\n').map(line => line.trim()).filter(Boolean) : [],
-      impact,
-      image1,
-      image2,
-      images: images ? images.split(',').map(img => img.trim()) : [],
-      githubLink,
-      liveLink,
-      date: new Date(),        // optional: for project year in UI
-      status: "Design"         // optional default if not included
-    });
+  await Project.findByIdAndUpdate(req.params.id, {
+    tag,
+    title,
+    slug,
+    description,
+    summary,
+    tools: tools ? tools.split(',').map(t => t.trim()) : [],
+    challenge,
+    approach: approach ? approach.split('\n').map(line => line.trim()).filter(Boolean) : [],
+    impact,
+    image1,
+    image2,
+    images: images ? images.split(',').map(img => img.trim()) : [],
+    githubLink,
+    liveLink,
+  });
 
-    await newProject.save();
-    res.redirect('/admin/projects');
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Error creating project');
-  }
+  res.redirect('/admin/projects');
 });
 
 
@@ -64,10 +61,10 @@ router.delete('/projects/:id', async (req, res) => {
 // List all skills
 router.get('/skills', async (req, res) => {
   const skills = await Skill.find().sort({ order: 1 });
-  res.render('admin/skills', { skills });
+  const editingId = req.query.edit || null;
+  res.render('admin/skills', { skills, editingId });
 });
 
-// Add a new skill
 // Add a new skill
 router.post('/skills', async (req, res) => {
   try {
@@ -88,6 +85,23 @@ router.post('/skills', async (req, res) => {
   }
 });
 
+
+// ✅ Update a skill
+router.put('/skills/:id', async (req, res) => {
+  try {
+    const { name, iconUrl, category, order } = req.body;
+    await Skill.findByIdAndUpdate(req.params.id, {
+      name,
+      iconUrl,
+      category,
+      order
+    });
+    res.redirect('/admin/skills');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Error updating skill');
+  }
+});
 
 // Delete a skill
 router.delete('/skills/:id', async (req, res) => {

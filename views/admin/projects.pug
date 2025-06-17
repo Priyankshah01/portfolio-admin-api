@@ -7,69 +7,88 @@ block content
   form(action="/admin/projects" method="POST")
     .form-group
       label(for="tag") Tag
-      input(type="text" name="tag" required placeholder="e.g. 🎁 GIFTELLE")
+      input(type="text" id="tag" name="tag" required placeholder="e.g. 🎁 GIFTELLE")
 
     .form-group
       label(for="title") Title
-      input(type="text" name="title" required placeholder="Project title")
+      input(type="text" id="title" name="title" required placeholder="Project title")
 
     .form-group
       label(for="slug") Slug
-      input(type="text" name="slug" required placeholder="e.g. giftelle")
+      input(type="text" id="slug" name="slug" required placeholder="e.g. giftelle")
 
     .form-group
       label(for="description") Short Description
-      textarea(name="description")
+      textarea(id="description" name="description")
 
     .form-group
       label(for="summary") Summary
-      textarea(name="summary")
+      textarea(id="summary" name="summary")
 
     .form-group
       label(for="tools") Tools (comma-separated)
-      input(type="text" name="tools" placeholder="e.g. React,Figma,Node")
+      input(type="text" id="tools" name="tools" placeholder="e.g. React,Figma,Node")
 
     .form-group
       label(for="challenge") Challenge
-      textarea(name="challenge")
+      textarea(id="challenge" name="challenge")
 
     .form-group
       label(for="approach") Approach (one per line)
-      textarea(name="approach")
+      textarea(id="approach" name="approach")
 
     .form-group
       label(for="impact") Impact
-      textarea(name="impact")
+      textarea(id="impact" name="impact")
 
     .form-group
       label(for="image1") Card Image 1 URL
-      input(type="text" name="image1")
+      input(type="text" id="image1" name="image1")
 
     .form-group
       label(for="image2") Card Image 2 URL
-      input(type="text" name="image2")
+      input(type="text" id="image2" name="image2")
 
     .form-group
       label(for="images") Additional Image URLs (comma-separated)
-      input(type="text" name="images")
+      input(type="text" id="images" name="images")
 
     .form-group
       label(for="githubLink") GitHub Link
-      input(type="text" name="githubLink")
+      input(type="text" id="githubLink" name="githubLink")
 
     .form-group
       label(for="liveLink") Live Project Link
-      input(type="text" name="liveLink")
+      input(type="text" id="liveLink" name="liveLink")
 
     button(type="submit") Add Project
 
   hr
 
-  //- Existing Projects List
   h2 Existing Projects
   each project in projects
     .project-item
-      h3 #{project.title}
-      p #{project.description}
-      form(action=`/admin/projects/${project._id}?_method=DELETE` method="POST")
-        button(type="submit") Delete
+      if editingId && editingId.toString() === project._id.toString()
+        form(action=`/admin/projects/${project._id}?_method=PUT` method="POST")
+          input(type="text" id="edit-tag" name="tag" value=project.tag placeholder="Tag")
+          input(type="text" id="edit-title" name="title" value=project.title placeholder="Title")
+          input(type="text" id="edit-slug" name="slug" value=project.slug placeholder="Slug")
+          textarea(id="edit-description" name="description")= project.description
+          textarea(id="edit-summary" name="summary")= project.summary
+          input(type="text" id="edit-tools" name="tools" value=project.tools.join(','))
+          textarea(id="edit-challenge" name="challenge")= project.challenge
+          textarea(id="edit-approach" name="approach")= project.approach.join('\n')
+          textarea(id="edit-impact" name="impact")= project.impact
+          input(type="text" id="edit-image1" name="image1" value=project.image1)
+          input(type="text" id="edit-image2" name="image2" value=project.image2)
+          input(type="text" id="edit-images" name="images" value=project.images.join(','))
+          input(type="text" id="edit-githubLink" name="githubLink" value=project.githubLink)
+          input(type="text" id="edit-liveLink" name="liveLink" value=project.liveLink)
+          button(type="submit") Save
+          a(href="/admin/projects" style="margin-left: 10px;") Cancel
+      else
+        h3 #{project.title}
+        p #{project.description}
+        form(action=`/admin/projects/${project._id}?_method=DELETE` method="POST")
+          button(type="submit") Delete
+        a(href=`/admin/projects?edit=${project._id}` style="margin-left: 10px;") Edit

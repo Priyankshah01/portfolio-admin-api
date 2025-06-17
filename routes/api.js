@@ -30,7 +30,7 @@ router.get('/skills', async (req, res) => {
     const skills = await Skill.find().sort({ order: 1 });
     res.json(skills);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ message: 'Error fetching skills', error: err.message });
   }
 });
 

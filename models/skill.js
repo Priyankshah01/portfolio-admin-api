@@ -7,14 +7,13 @@ const skillSchema = new mongoose.Schema({
     unique: true
   },
   iconUrl: {
-    type: String,
-    required: true
+    type: String // optional: can be added later for logos
   },
   category: {
-    type: String // optional (e.g., "Frontend", "Design Tool", etc.)
+    type: String // optional: "Frontend", "Design", etc.
   },
   order: {
-    type: Number // for sorting in the frontend
+    type: Number // for sorting
   },
   createdAt: {
     type: Date,
